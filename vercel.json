@@ -1,0 +1,16 @@
+{
+    "rewrites": [
+      {
+        "source": "/configure",
+        "destination": "/api/configure.ts"
+      },
+      {
+        "source": "/redirect",
+        "destination": "/api/redirect.ts"
+      },
+      {
+        "source": "/webhook",
+        "destination": "/api/webhook.ts"
+      }
+    ]
+  }
