@@ -16,6 +16,8 @@ const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
+  
+  const {code, next, teamId, configurationId } = query;
   console.log(req);
 
   const userCollectRef = await db.collection('installations');
@@ -28,7 +30,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     body: qs.stringify({
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
-      code: req.query.code,
+      code: code,
       redirect_uri: `${process.env.HOST}/callback` // this parameter should match the Redirect URL in your integration settings on Vercel
     })
   });
