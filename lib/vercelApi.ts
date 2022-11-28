@@ -47,8 +47,6 @@ export async function get(path: string, queryParams: URLSearchParams, headers: H
 
   console.log(url)
 
-  headers.append("Content-Type", "application/json");
-  headers.append("Authorization", `Bearer cs094D2TMxKKOCLCs6dBkX7n`);
   const resp = await fetch(url, { headers });
   const json = await resp.json();
   return json;
