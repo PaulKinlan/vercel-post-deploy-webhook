@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import * as vercel from '../lib/vercel';
 import * as admin from 'firebase-admin';
+import { getProjects } from '../lib/vercel/projects';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -41,8 +43,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     })
   } 
 
-  // Get a list of projects
+  api.defaults.headers = {
+    access_token: installation.data['accessToken']
+  };
 
+  // Get a list of projects
+  const projects = await getProjects({
+    teamId: installation['installation_id'],
+  });
+
+  console.log(projects);
 
   const result =
     res.status(200).end(`<html>
@@ -51,7 +61,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   </head>
   <body>
   <h1>Configure</h1>
-  
+  ${projects}
   </body>
 </html>`)
 }
