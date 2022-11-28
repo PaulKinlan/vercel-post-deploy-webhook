@@ -23,7 +23,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   }
 
-  const installationRef = await db.collection('installations').doc(installation_id[0]);
+  const installationRef = await db.collection('installations').doc(<string>installation_id);
 
   const installation = await installationRef.get();
 
