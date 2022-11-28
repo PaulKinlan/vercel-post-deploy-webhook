@@ -25,8 +25,8 @@ serviceGateway.init({
 // 1. id - the name of the security definition from your OpenAPI spec
 // 2. scopes - the token scope(s) required
 // Should return a promise
-function getAuthorization(security) {
-  console.log(security);
+function getAuthorization(security, securityDefinitions, op) {
+  console.log("Get Authorization", security, securityDefinitions, op);
   switch (security.id) {
     case 'bearerToken': return Promise.resolve({ token: installationData?.access_token});
     case 'account': return Promise.resolve({ token: installationData?.access_token});
