@@ -35,6 +35,7 @@ function acquireRights(op: api.OperationInfo, spec: api.OpenApiSpec, options: ap
 	if (op.security && options.getAuthorization) {
 		return op.security.reduce<Promise<api.OperationRights>>((promise, security) => {
 			return promise.then(rights => {
+				console.log('acquireRights', security, spec, op)
 				const securityDefinition = spec.securityDefinitions[security.id]
 				return options.getAuthorization(security, securityDefinition, op)
 							.then(auth => {
