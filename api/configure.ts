@@ -23,13 +23,26 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   }
 
+  // Installations. Access Tokens etc.
   const installationRef = await db.collection('installations').doc(<string>configurationId);
-
   const installation = await installationRef.get();
-
   if(installation.exists == false) {
     res.status(401).end('Not authorised');
   }
+
+  // Configuration. What should we do with the webhook.
+  const configurationRef = await db.collection('configuration').doc(<string>configurationId);
+
+  const configuration = await configurationRef.get();
+
+  if (configuration.exists == false) {
+    configurationRef.set({
+      configurationId
+    })
+  } 
+
+  // Get a list of projects
+
 
   const result =
     res.status(200).end(`<html>
