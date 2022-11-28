@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as serviceGateway from '../lib/vercel/gateway/index';
 import * as admin from 'firebase-admin';
-import { getProjects } from '../lib/vercel/projects';
+import { Vercel } from '../lib/vercelApi';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -13,28 +13,6 @@ if (!admin.apps.length) {
   });
 }
 
-// Global for the current installation;
-let installationData;
-
-serviceGateway.init({
-  getAuthorization // Add a `getAuthorization` handler for when a request requires auth credentials
-});
- 
-// The param 'security' represents the security definition in your OpenAPI spec a request is requiring
-// For bearer type it has two properties:
-// 1. id - the name of the security definition from your OpenAPI spec
-// 2. scopes - the token scope(s) required
-// Should return a promise
-function getAuthorization(security, securityDefinitions, op) {
-  console.log("Get Authorization", security, securityDefinitions, op);
-  switch (security.id) {
-    case 'bearerToken': return Promise.resolve({ token: installationData?.access_token});
-    case 'account': return Promise.resolve({ token: installationData?.access_token});
-    // case 'api_key': return getApiKey(security); // Or any other securityDefinitions from your OpenAPI spec
-    default: throw new Error(`Unknown security type '${security.id}'`)
-  }
-};
- 
 const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
@@ -46,11 +24,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   // Installations. Access Tokens etc.
   const installationRef = await db.collection('installations').doc(<string>configurationId);
   const installation = await installationRef.get();
-  if(installation.exists == false) {
+  if (installation.exists == false) {
     res.status(401).end('Not authorised');
   }
 
-  installationData = installation.data();
+  const installationData = installation.data();
 
   // Configuration. What should we do with the webhook.
   const configurationRef = await db.collection('configuration').doc(<string>configurationId);
@@ -61,11 +39,13 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     configurationRef.set({
       configurationId
     })
-  } 
-  
+  }
+
+  const vercelAPI = new Vercel({ authorization: installationData.accessToken })
+
   // Get a list of projects
-  const projects = await getProjects({
-    teamId: installationData['installation_id'],
+  const projects = await vercelAPI.projects({
+    teamId: installationData.installation_id
   });
 
   console.log(projects);
