@@ -26,22 +26,24 @@ export class Vercel {
   }
 
   constructor(init?: InitArgs) {
-    if(init) {
+    if (init) {
       this.authorization = init.authorization;
     }
   }
 
   async projects(params: any) {
-    const queryParams = this.convertEntriesToURLSearchParams(params)
-    return get("/v9/projects",queryParams, this.getHeaders());
+    return get("/v9/projects", params, this.getHeaders());
   }
 }
 
 
-export async function get(path: string, queryParams: URLSearchParams, headers: Headers): Promise<any> {
+export async function get(path: string, queryParams: any, headers: Headers): Promise<any> {
   const url = new URL(path, basePath);
 
-  for (let [entry, value] of queryParams.entries()) {
+  const params = this.convertEntriesToURLSearchParams(queryParams)
+
+
+  for (let [entry, value] of params.entries()) {
     url.searchParams.append(entry, value);
   }
 

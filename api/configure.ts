@@ -40,7 +40,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     })
   }
 
-  const vercelAPI = new Vercel({ authorization: installationData.accessToken })
+  const vercelAPI = new Vercel({ authorization: installationData.access_token })
 
   // Get a list of projects
   const projects = await vercelAPI.projects({
