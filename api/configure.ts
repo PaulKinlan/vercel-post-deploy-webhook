@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as serviceGateway from '../lib/vercel/gateway/index';
 import * as admin from 'firebase-admin';
 import { Vercel } from '../lib/vercelApi';
 

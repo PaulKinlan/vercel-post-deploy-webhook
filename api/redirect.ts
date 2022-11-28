@@ -1,7 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as admin from 'firebase-admin';
 import * as qs from 'qs';
-import { Installation } from '../lib/types';
 
 if (!admin.apps.length) {
   admin.initializeApp({

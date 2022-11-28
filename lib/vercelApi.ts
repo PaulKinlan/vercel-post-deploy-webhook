@@ -46,6 +46,7 @@ export async function get(path: string, queryParams: URLSearchParams, headers: H
   }
 
   console.log(url)
+  console.log(headers)
 
   const resp = await fetch(url, { headers });
   const json = await resp.json();
