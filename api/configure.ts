@@ -1,7 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as serviceGateway from '../lib/vercel/gateway/index';
 import * as admin from 'firebase-admin';
-import { getProjects } from '../lib/vercel/projects';
 
 if (!admin.apps.length) {
   admin.initializeApp({
