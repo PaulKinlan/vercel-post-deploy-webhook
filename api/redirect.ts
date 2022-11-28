@@ -38,12 +38,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const accessTokenBody = await result.json();
 
   // This one apps config.
-  userCollectRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
-
-  console.log('https://api.vercel.com/v2/oauth/access_token returned:', JSON.stringify(accessTokenBody, null, '  '));
-
-  //
-  res.redirect(next)
+  await userCollectRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
+  
+  res.redirect(<string>next);
 
   //res.redirect(`https://vercel-post-deploy-webhook.vercel.app/configure?installation_id=${accessTokenBody.installation_id}&next=${next}`);
 }
