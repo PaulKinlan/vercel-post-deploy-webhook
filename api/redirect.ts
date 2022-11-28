@@ -18,7 +18,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
   console.log(req);
 
-  const userCollectRef = await db.collection('users');;
+  const userCollectRef = await db.collection('installations');
 
   const result = await fetch('https://api.vercel.com/v2/oauth/access_token', {
     headers: {
@@ -31,14 +31,14 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       code: req.query.code,
       redirect_uri: `${process.env.HOST}/callback` // this parameter should match the Redirect URL in your integration settings on Vercel
     })
-  })
+  });
 
-  const accessTokenBody = await result.json()
+  const accessTokenBody = await result.json();
 
   // This one apps config.
-  userCollectRef.doc().set(accessTokenBody)
+  userCollectRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
 
-  console.log('https://api.vercel.com/v2/oauth/access_token returned:', JSON.stringify(accessTokenBody, null, '  '))
+  console.log('https://api.vercel.com/v2/oauth/access_token returned:', JSON.stringify(accessTokenBody, null, '  '));
 
-  res.status(200).json(accessTokenBody)
+  res.redirect(`https://vercel-post-deploy-webhook.vercel.app/configure?id=${body.installation_id}`);
 }
