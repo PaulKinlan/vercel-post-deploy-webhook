@@ -17,13 +17,13 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
   console.log(body, query, method, url, headers);
 
-  const { installation_id } = query;
+  const { configurationId } = query;
 
   if (method == 'POST') {
 
   }
 
-  const installationRef = await db.collection('installations').doc(<string>installation_id);
+  const installationRef = await db.collection('installations').doc(<string>configurationId);
 
   const installation = await installationRef.get();
 
