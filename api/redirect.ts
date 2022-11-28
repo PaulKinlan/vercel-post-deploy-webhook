@@ -31,12 +31,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     })
   })
 
-  const body = await result.json()
+  const accessTokenBody = await result.json()
 
   // This one apps config.
-  userCollectRef.doc().set(body)
+  userCollectRef.doc().set(accessTokenBody)
 
-  console.log('https://api.vercel.com/v2/oauth/access_token returned:', JSON.stringify(body, null, '  '))
+  console.log('https://api.vercel.com/v2/oauth/access_token returned:', JSON.stringify(accessTokenBody, null, '  '))
 
-  res.status(200).json(body)
+  res.status(200).json(accessTokenBody)
 }
