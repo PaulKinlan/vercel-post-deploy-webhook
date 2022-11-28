@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as admin from 'firebase-admin';
 import * as qs from 'qs';
+import { Installation } from '../lib/types';
 
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -20,7 +21,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const {code, next, teamId, configurationId } = query;
   console.log(req);
 
-  const userCollectRef = await db.collection('installations');
+  const installationRef = await db.collection('installations');
 
   const result = await fetch('https://api.vercel.com/v2/oauth/access_token', {
     headers: {
@@ -38,9 +39,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const accessTokenBody = await result.json();
 
   // This one apps config.
-  await userCollectRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
+  const installation = await installationRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
+
+  console.log(installation)
   
   res.redirect(<string>next);
-
-  //res.redirect(`https://vercel-post-deploy-webhook.vercel.app/configure?installation_id=${accessTokenBody.installation_id}&next=${next}`);
 }
