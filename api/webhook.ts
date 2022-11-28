@@ -6,4 +6,6 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const { body, query, method, url, headers } = req;
 
     console.log(req)
+
+    res.status(200).end('ok')
 }
