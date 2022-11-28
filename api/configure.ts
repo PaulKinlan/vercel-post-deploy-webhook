@@ -45,7 +45,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   // Get a list of projects
   const projects = await vercelAPI.projects({
-    teamId: installationData.installation_id
+    teamId: installationData.team_id
   });
 
   console.log(projects);
