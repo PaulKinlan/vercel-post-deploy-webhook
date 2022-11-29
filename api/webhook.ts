@@ -39,8 +39,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const installation = installationResult.docs[0]
 
   if (installation.exists == false) {
+    console.log("installation doesn't exist");
     res.status(401).end('Not authorised');
   }
+
+  // Now we can forward the request.
 
   res.status(200).end('ok')
 }
