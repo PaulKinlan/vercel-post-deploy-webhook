@@ -98,7 +98,7 @@ async function get(req: VercelRequest, res: VercelResponse) {
 }
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-  const { body, query, method, url, headers } = req;
+  const { method } = req;
   let projectsResposnse, installation_id, team_id, configuration;
 
   if (method == "POST") {
@@ -111,8 +111,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     return res.status(404).end(":(")
   }
 
-  const result =
-    res.status(200).end(`<html>
+  res.status(200).end(`<html>
   <head>
     <title>Configure Webhook</title>
   </head>

@@ -15,10 +15,9 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-  const { body, query, method, url, headers } = req;
+  const { query } = req;
   
-  const {code, next, teamId, configurationId } = query;
-  console.log(req);
+  const {code, next } = query;
 
   const installationRef = await db.collection('installations');
 

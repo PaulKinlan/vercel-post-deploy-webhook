@@ -15,19 +15,20 @@ const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
-  /*const { installation_id } = query;
 
   console.log(body);
 
-  const installationRef = await db.collection('installations').doc(installation_id[0]);
+  const { id } = body.project;
 
-  const installation = await installationRef.get();
+  const installationResult = await db.collection('installations').where(id, "!=", "").get();
+
+  console.log(installationResult)
+
+  const installation = installationResult.docs[0]
 
   if(installation.exists == false) {
     res.status(401).end('Not authorised');
   }
-
-  */
 
   res.status(200).end('ok')
 }
