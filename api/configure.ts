@@ -91,13 +91,13 @@ async function get(req: VercelRequest, res: VercelResponse) {
     teamId: team_id
   });
 
+  console.log(projects)
+
   return { projects, installation_id, team_id };
 }
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
-  console.log(body, query, method);
-
   let projects, installation_id, team_id;
 
   if (method == "POST") {
