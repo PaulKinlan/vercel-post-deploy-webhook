@@ -18,14 +18,21 @@ const db = admin.firestore();
 async function post(req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
   // Installations. Access Tokens etc.
-  const configuration_id = query.configurationId;
-  console.log(body)
+  const configuration_id = body.configurationId || query.configurationId;
 
   const installationRef = await db.collection('installations').doc(<string>configuration_id);
   const installation = await installationRef.get();
   if (installation.exists == false) {
     res.status(401).end('Not authorised');
   }
+
+  // parse the body
+  const projectSettings = {};
+
+  for (let [key, value] of Object.entries(body).filter(([key, value]) => value != "")) {
+    projectSettings[key] = value;
+  }
+
 
   const installationData = installation.data();
   const team_id = installationData.team_id;
@@ -35,17 +42,12 @@ async function post(req: VercelRequest, res: VercelResponse) {
   // Configuration. What should we do with the webhook.
   const configurationRef = await db.collection('configuration').doc(<string>installation_id);
 
-  const configuration = await configurationRef.get();
+  //const configuration = await configurationRef.get();
 
-  if (configuration.exists == false) {
-    configurationRef.set({
-      installation_id
-    })
-  } else {
-    configurationRef.set({
-      installation_id
-    })
-  }
+  configurationRef.set({
+    installation_id,
+    ...projectSettings
+  });
 
   const vercelAPI = new Vercel({ authorization: access_token })
 
@@ -58,7 +60,7 @@ async function post(req: VercelRequest, res: VercelResponse) {
 }
 
 async function get(req: VercelRequest, res: VercelResponse) {
-  const { body, query, method, url, headers } = req;
+  const { query } = req;
   // Installations. Access Tokens etc.
   const configuration_id = query.configurationId;
 
@@ -90,8 +92,6 @@ async function get(req: VercelRequest, res: VercelResponse) {
   const projectsResposnse = await vercelAPI.projects({
     teamId: team_id
   });
-
-  console.log(projectsResposnse)
 
   return { projectsResposnse, installation_id, team_id };
 }
