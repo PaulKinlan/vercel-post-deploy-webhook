@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as admin from 'firebase-admin';
 import { Vercel } from '../lib/vercelApi';
 
+
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -14,40 +15,101 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
-export default async function (req: VercelRequest, res: VercelResponse) {
+async function post(req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
-  console.log(body, query, method, url, headers);
-
-  const { configurationId } = query;
-
   // Installations. Access Tokens etc.
-  const installationRef = await db.collection('installations').doc(<string>configurationId);
+  const configuration_id = query.configurationId;
+  console.log(body)
+
+  const installationRef = await db.collection('installations').doc(<string>configuration_id);
   const installation = await installationRef.get();
   if (installation.exists == false) {
     res.status(401).end('Not authorised');
   }
 
   const installationData = installation.data();
+  const team_id = installationData.team_id;
+  const access_token = installationData.access_token;
+  const installation_id = installationData.installation_id;
 
   // Configuration. What should we do with the webhook.
-  const configurationRef = await db.collection('configuration').doc(<string>configurationId);
+  const configurationRef = await db.collection('configuration').doc(<string>installation_id);
 
   const configuration = await configurationRef.get();
 
   if (configuration.exists == false) {
     configurationRef.set({
-      configurationId
+      installation_id
+    })
+  } else {
+    configurationRef.set({
+      installation_id,
+      ... 
     })
   }
 
-  const vercelAPI = new Vercel({ authorization: installationData.access_token })
+  const vercelAPI = new Vercel({ authorization: access_token })
 
   // Get a list of projects
   const projects = await vercelAPI.projects({
-    teamId: installationData.team_id
+    teamId: team_id
   });
 
-  console.log(projects);
+  return { projects, installation_id, team_id };
+}
+
+async function get(req: VercelRequest, res: VercelResponse) {
+  const { body, query, method, url, headers } = req;
+  // Installations. Access Tokens etc.
+  const configuration_id = query.configurationId;
+
+  const installationRef = await db.collection('installations').doc(<string>configuration_id);
+  const installation = await installationRef.get();
+  if (installation.exists == false) {
+    res.status(401).end('Not authorised');
+  }
+
+  const installationData = installation.data();
+  const team_id = installationData.team_id;
+  const access_token = installationData.access_token;
+  const installation_id = installationData.installation_id;
+
+  // Configuration. What should we do with the webhook.
+  const configurationRef = await db.collection('configuration').doc(<string>installation_id);
+
+  const configuration = await configurationRef.get();
+
+  if (configuration.exists == false) {
+    configurationRef.set({
+      installation_id
+    })
+  }
+
+  const vercelAPI = new Vercel({ authorization: access_token })
+
+  // Get a list of projects
+  const projects = await vercelAPI.projects({
+    teamId: team_id
+  });
+
+  return { projects, installation_id, team_id };
+}
+
+export default async function (req: VercelRequest, res: VercelResponse) {
+  const { body, query, method, url, headers } = req;
+  console.log(body, query, method);
+
+  let projects, installation_id, team_id;
+
+  if (method == "post") {
+    ({ projects, installation_id, team_id } = await post(req, res))
+  }
+  else if (method == "get") {
+    ({ projects, installation_id, team_id } = await get(req, res))
+  }
+  else {
+    return res.status(404).end(":(")
+  }
 
   const result =
     res.status(200).end(`<html>
@@ -56,7 +118,17 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   </head>
   <body>
   <h1>Configure</h1>
-  ${projects}
+  <form method="post" action="/configure">
+  ${projects.map(project => {
+      return `
+    <label for="${project.id}>${project.name}</label>
+    <input type="url" name="${project.id}">`
+    }).join('')}
+
+    <input type="hidden" value="${installation_id}" name="configurationId">
+    <input type="hidden" value="${team_id}" name="teamId">
+    <input type="submit">
+  </form>
   </body>
 </html>`)
 }
