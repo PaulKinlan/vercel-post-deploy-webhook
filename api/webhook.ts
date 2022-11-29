@@ -24,6 +24,12 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const user_id = body.payload.user.id;
   const team_id = body.payload.team.id;
 
+  if (body.type != "deployment.successful") {
+    return res.status(404).end("incorrect event")
+  }
+
+  console.log(body.meta);
+
   const installationResult = await db.collection('installations')
     .where("team_id", "==", team_id)
     .where(id, "!=", "").get();
