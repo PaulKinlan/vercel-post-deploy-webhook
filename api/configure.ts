@@ -50,11 +50,11 @@ async function post(req: VercelRequest, res: VercelResponse) {
   const vercelAPI = new Vercel({ authorization: access_token })
 
   // Get a list of projects
-  const projects = await vercelAPI.projects({
+  const projectsResposnse = await vercelAPI.projects({
     teamId: team_id
   });
 
-  return { projects, installation_id, team_id };
+  return { projectsResposnse, installation_id, team_id };
 }
 
 async function get(req: VercelRequest, res: VercelResponse) {
@@ -87,24 +87,24 @@ async function get(req: VercelRequest, res: VercelResponse) {
   const vercelAPI = new Vercel({ authorization: access_token })
 
   // Get a list of projects
-  const projects = await vercelAPI.projects({
+  const projectsResposnse = await vercelAPI.projects({
     teamId: team_id
   });
 
-  console.log(projects)
+  console.log(projectsResposnse)
 
-  return { projects, installation_id, team_id };
+  return { projectsResposnse, installation_id, team_id };
 }
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
-  let projects, installation_id, team_id;
+  let projectsResposnse, installation_id, team_id;
 
   if (method == "POST") {
-    ({ projects, installation_id, team_id } = await post(req, res))
+    ({ projectsResposnse, installation_id, team_id } = await post(req, res))
   }
   else if (method == "GET") {
-    ({ projects, installation_id, team_id } = await get(req, res))
+    ({ projectsResposnse, installation_id, team_id } = await get(req, res))
   }
   else {
     return res.status(404).end(":(")
@@ -118,7 +118,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   <body>
   <h1>Configure</h1>
   <form method="post" action="/configure">
-  ${projects.map(project => {
+  ${projectsResposnse.projects.map(project => {
       return `
     <label for="${project.id}>${project.name}</label>
     <input type="url" name="${project.id}">`
