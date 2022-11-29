@@ -42,12 +42,13 @@ async function post(req: VercelRequest, res: VercelResponse) {
   // Configuration. What should we do with the webhook.
   const configurationRef = await db.collection('configuration').doc(<string>installation_id);
 
-  const configuration = await configurationRef.get();
-
-  configurationRef.set({
+  await configurationRef.set({
     installation_id,
     ...projectSettings
   });
+
+  const configuration = await configurationRef.get();
+
 
   const vercelAPI = new Vercel({ authorization: access_token })
 
