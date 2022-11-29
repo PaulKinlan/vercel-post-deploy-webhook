@@ -121,7 +121,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   ${projectsResposnse.projects.map(project => {
       return `
     <label for="${project.id}">${project.name}</label>
-    <input type="url" name="${project.id}">`
+    <input type="url" name="${project.id}" id="${project.id}">`
     }).join('')}
 
     <input type="hidden" value="${installation_id}" name="configurationId">
