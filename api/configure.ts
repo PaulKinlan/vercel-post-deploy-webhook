@@ -120,7 +120,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   <form method="post" action="/configure">
   ${projectsResposnse.projects.map(project => {
       return `
-    <label for="${project.id}>${project.name}</label>
+    <label for="${project.id}">${project.name}</label>
     <input type="url" name="${project.id}">`
     }).join('')}
 
