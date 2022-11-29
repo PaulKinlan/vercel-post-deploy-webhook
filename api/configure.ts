@@ -42,7 +42,7 @@ async function post(req: VercelRequest, res: VercelResponse) {
   // Configuration. What should we do with the webhook.
   const configurationRef = await db.collection('configuration').doc(<string>installation_id);
 
-  //const configuration = await configurationRef.get();
+  const configuration = await configurationRef.get();
 
   configurationRef.set({
     installation_id,
@@ -56,7 +56,7 @@ async function post(req: VercelRequest, res: VercelResponse) {
     teamId: team_id
   });
 
-  return { projectsResposnse, installation_id, team_id };
+  return { projectsResposnse, installation_id, team_id, configuration: configuration.data() };
 }
 
 async function get(req: VercelRequest, res: VercelResponse) {
@@ -83,7 +83,7 @@ async function get(req: VercelRequest, res: VercelResponse) {
   if (configuration.exists == false) {
     configurationRef.set({
       installation_id
-    })
+    });
   }
 
   const vercelAPI = new Vercel({ authorization: access_token })
@@ -93,18 +93,18 @@ async function get(req: VercelRequest, res: VercelResponse) {
     teamId: team_id
   });
 
-  return { projectsResposnse, installation_id, team_id };
+  return { projectsResposnse, installation_id, team_id, configuration: configuration.data() };
 }
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, query, method, url, headers } = req;
-  let projectsResposnse, installation_id, team_id;
+  let projectsResposnse, installation_id, team_id, configuration;
 
   if (method == "POST") {
-    ({ projectsResposnse, installation_id, team_id } = await post(req, res))
+    ({ projectsResposnse, installation_id, team_id, configuration } = await post(req, res))
   }
   else if (method == "GET") {
-    ({ projectsResposnse, installation_id, team_id } = await get(req, res))
+    ({ projectsResposnse, installation_id, team_id, configuration } = await get(req, res))
   }
   else {
     return res.status(404).end(":(")
@@ -121,7 +121,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   ${projectsResposnse.projects.map(project => {
       return `
     <label for="${project.id}">${project.name}</label>
-    <input type="url" name="${project.id}" id="${project.id}">`
+    <input type="url" name="${project.id}" id="${project.id}" value="${(configuration[project.id]?.name) || ""}">`
     }).join('')}
 
     <input type="hidden" value="${installation_id}" name="configurationId">
