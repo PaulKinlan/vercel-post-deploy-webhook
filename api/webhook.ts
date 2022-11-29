@@ -38,7 +38,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   const installation = installationResult.docs[0]
 
-  if(installation.exists == false) {
+  if (installation.exists == false) {
     res.status(401).end('Not authorised');
   }
 
