@@ -24,7 +24,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const user_id = body.payload.user.id;
   const team_id = body.payload.team.id;
 
-  if (body.type != "deployment.successful") {
+  if (body.type != "deployment.succeeded") {
     console.log("incorrect web hook event", body.type)
     return res.status(404).end("incorrect event")
   }
