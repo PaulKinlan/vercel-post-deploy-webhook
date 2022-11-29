@@ -100,10 +100,10 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   let projects, installation_id, team_id;
 
-  if (method == "post") {
+  if (method == "POST") {
     ({ projects, installation_id, team_id } = await post(req, res))
   }
-  else if (method == "get") {
+  else if (method == "GET") {
     ({ projects, installation_id, team_id } = await get(req, res))
   }
   else {
