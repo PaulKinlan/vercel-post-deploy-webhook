@@ -43,8 +43,7 @@ async function post(req: VercelRequest, res: VercelResponse) {
     })
   } else {
     configurationRef.set({
-      installation_id,
-      ... 
+      installation_id
     })
   }
 
