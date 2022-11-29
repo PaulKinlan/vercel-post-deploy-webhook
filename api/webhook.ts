@@ -14,13 +14,19 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-  const { body } = req;
+  const { body, headers, query } = req;
 
+  console.log(query);
+  console.log(headers);
   console.log(body);
 
-  const { id } = body.project;
+  const { id } = body.payload.project;
+  const user_id = body.payload.user.id;
+  const team_id = body.payload.team.id;
 
-  const installationResult = await db.collection('installations').where(id, "!=", "").get();
+  const installationResult = await db.collection('installations')
+    .where("team_id", "==", team_id)
+    .where(id, "!=", "").get();
 
   console.log(installationResult)
 
