@@ -14,7 +14,7 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-  const { body, query, method, url, headers } = req;
+  const { body } = req;
 
   console.log(body);
 
