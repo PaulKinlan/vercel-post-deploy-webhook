@@ -43,8 +43,9 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     res.status(401).end("Not authorised");
   }
 
+  console.log("URL", configurationData[id])
   // Now we can forward the request.
-  await fetch(configurationData[id], {
+  const hookResponse = await fetch(configurationData[id], {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -52,6 +53,8 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     method: "POST",
     body: JSON.stringify(body.payload),
   });
+
+  console.log(await hookResponse.json())
 
   res.status(200).end("ok");
 }
