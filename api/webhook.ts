@@ -45,6 +45,8 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     res.status(401).end("Not authorised");
   }
 
+  console.log(configurationData, id)
+
   // Now we can forward the request.
   await fetch(configurationData[id], {
     headers: {
