@@ -21,7 +21,6 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   console.log(body);
 
   const { id } = body.payload.project;
-  const user_id = body.payload.user.id;
   const team_id = body.payload.team.id;
 
   if (body.type != "deployment.succeeded") {
@@ -31,20 +30,27 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   console.log(body.meta);
 
-  const installationResult = await db.collection('installations')
+  const configurationResult = await db.collection('configuration')
     .where("team_id", "==", team_id)
     .where(id, "!=", "").get();
 
-  console.log(installationResult)
+  console.log(configurationResult)
 
-  const installation = installationResult.docs[0]
+  const configuration = configurationResult.docs[0]
 
-  if (installation.exists == false) {
-    console.log("installation doesn't exist");
+  if (configuration.exists == false) {
+    console.log("configuration doesn't exist");
     res.status(401).end('Not authorised');
   }
 
   // Now we can forward the request.
+  await fetch(configuration[id], {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: "POST", body: JSON.stringify(body.payload)
+  })
 
   res.status(200).end('ok')
 }

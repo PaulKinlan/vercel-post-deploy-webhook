@@ -33,7 +33,6 @@ async function post(req: VercelRequest, res: VercelResponse) {
     projectSettings[key] = value;
   }
 
-
   const installationData = installation.data();
   const team_id = installationData.team_id;
   const access_token = installationData.access_token;
@@ -125,7 +124,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     }).join('')}
 
     <input type="hidden" value="${installation_id}" name="configurationId">
-    <input type="hidden" value="${team_id}" name="teamId">
+    <input type="hidden" value="${team_id}" name="team_id">
     <input type="submit">
   </form>
   </body>
