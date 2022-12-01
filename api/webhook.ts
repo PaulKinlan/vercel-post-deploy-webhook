@@ -33,14 +33,14 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const configurationResult = await db
     .collection("configuration")
     .where("team_id", "==", team_id)
-    .where(id, "!=", "")
     .get();
 
   console.log(configurationResult);
 
   const configuration = configurationResult.docs[0];
+  const configurationData = configuration.data();
 
-  if (configuration.exists == false) {
+  if (configuration.exists == false || (id in configurationData == false)) {
     console.log("configuration doesn't exist");
     res.status(401).end("Not authorised");
   }
