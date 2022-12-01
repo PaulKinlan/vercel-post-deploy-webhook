@@ -46,7 +46,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   }
 
   // Now we can forward the request.
-  await fetch(configuration[id], {
+  await fetch(configurationData[id], {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
