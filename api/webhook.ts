@@ -30,7 +30,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     .where("team_id", "==", team_id)
     .get();
 
-    if (configurationResult.empty) {
+  if (configurationResult.empty) {
     console.log("configuration doesn't exist - empty");
     res.status(401).end("Not authorised");
   }
