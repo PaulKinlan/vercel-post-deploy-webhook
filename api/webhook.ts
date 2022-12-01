@@ -15,11 +15,6 @@ const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { body, headers, query } = req;
-
-  console.log(query);
-  console.log(headers);
-  console.log(body);
-
   const { id } = body.payload.project;
   const team_id = body.payload.team.id;
 
@@ -35,19 +30,15 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     .where("team_id", "==", team_id)
     .get();
 
-  console.log(configurationResult);
-
-  if (configurationResult.empty) {
+    if (configurationResult.empty) {
     console.log("configuration doesn't exist - empty");
     res.status(401).end("Not authorised");
   }
 
-  const configuration = configurationResult.docs[0];
-  const configurationData = configuration.data();
-  
-  console.log("Configuration Data", configurationData)
+  const configurationRef = configurationResult.docs[0];
+  const configurationData = configurationRef.data();
 
-  if (configuration.exists == false || (id in configurationData == false)) {
+  if (configurationRef.exists == false || id in configurationData == false) {
     console.log("configuration doesn't exist");
     res.status(401).end("Not authorised");
   }
