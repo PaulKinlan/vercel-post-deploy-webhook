@@ -37,15 +37,20 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   console.log(configurationResult);
 
+  if (configurationResult.empty) {
+    console.log("configuration doesn't exist - empty");
+    res.status(401).end("Not authorised");
+  }
+
   const configuration = configurationResult.docs[0];
   const configurationData = configuration.data();
+  
+  console.log("Configuration Data", configurationData)
 
   if (configuration.exists == false || (id in configurationData == false)) {
     console.log("configuration doesn't exist");
     res.status(401).end("Not authorised");
   }
-
-  console.log(configurationData, id)
 
   // Now we can forward the request.
   await fetch(configurationData[id], {
