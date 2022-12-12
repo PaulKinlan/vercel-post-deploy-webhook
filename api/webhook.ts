@@ -52,7 +52,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     body: JSON.stringify(body.payload),
   });
 
-  console.log(await hookResponse.json())
+  console.log(await hookResponse.text());
 
   res.status(200).end("ok");
 }
