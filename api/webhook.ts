@@ -23,8 +23,6 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     return res.status(404).end("incorrect event");
   }
 
-  console.log(body.meta);
-
   const configurationResult = await db
     .collection("configuration")
     .where("team_id", "==", team_id)
