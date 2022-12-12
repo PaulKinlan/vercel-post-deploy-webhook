@@ -14,13 +14,13 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
-  const { body, headers, query } = req;
+  const { body } = req;
   const { id } = body.payload.project;
   const team_id = body.payload.team.id;
 
   if (body.type != "deployment.succeeded") {
-    console.log("incorrect web hook event", body.type);
-    return res.status(404).end("incorrect event");
+    console.log("Incorrect web hook event", body.type);
+    return res.status(404).end("Incorrect event");
   }
 
   const configurationResult = await db
@@ -29,7 +29,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     .get();
 
   if (configurationResult.empty) {
-    console.log("configuration doesn't exist - empty");
+    console.log("Configuration doesn't exist - empty");
     res.status(401).end("Not authorised");
   }
 
@@ -37,11 +37,11 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   const configurationData = configurationRef.data();
 
   if (configurationRef.exists == false || id in configurationData == false) {
-    console.log("configuration doesn't exist");
+    console.log("Configuration doesn't exist");
     res.status(401).end("Not authorised");
   }
 
-  console.log("URL", configurationData[id])
+  console.log("Sending message to", configurationData[id])
   // Now we can forward the request.
   const hookResponse = await fetch(configurationData[id], {
     headers: {
