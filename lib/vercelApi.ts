@@ -16,9 +16,6 @@ export class Vercel {
       url.searchParams.append(entry, value);
     }
   
-    console.log(url)
-    console.log(headers)
-  
     const resp = await fetch(url, { headers });
     const json = await resp.json();
     return json;
