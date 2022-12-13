@@ -2,7 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as admin from 'firebase-admin';
 import { Vercel } from '../lib/vercelApi';
 
-
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -16,12 +15,12 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 async function post(req: VercelRequest, res: VercelResponse) {
-  const { body, query, method, url, headers } = req;
+  const { body, query } = req;
   // Installations. Access Tokens etc.
   const configuration_id = body.configurationId || query.configurationId;
-
   const installationRef = await db.collection('installations').doc(<string>configuration_id);
   const installation = await installationRef.get();
+
   if (installation.exists == false) {
     res.status(401).end('Not authorised');
   }
@@ -47,8 +46,6 @@ async function post(req: VercelRequest, res: VercelResponse) {
   });
 
   const configuration = await configurationRef.get();
-
-
   const vercelAPI = new Vercel({ authorization: access_token })
 
   // Get a list of projects
@@ -112,16 +109,16 @@ export default async function (req: VercelRequest, res: VercelResponse) {
 
   res.status(200).end(`<html>
   <head>
-    <title>Configure Webhook</title>
+    <title>Configure Post Deploy Web Hook.</title>
   </head>
   <body>
   <h1>Configure</h1>
   <form method="post" action="/configure">
   ${projectsResposnse.projects.map(project => {
-      return `
+    return `
     <label for="${project.id}">${project.name}</label>
     <input type="url" name="${project.id}" id="${project.id}" value="${configuration[project.id] || ""}">`
-    }).join('')}
+  }).join('')}
 
     <input type="hidden" value="${installation_id}" name="configurationId">
     <input type="hidden" value="${team_id}" name="team_id">
