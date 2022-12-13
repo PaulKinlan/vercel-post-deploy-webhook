@@ -16,8 +16,7 @@ const db = admin.firestore();
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const { query } = req;
-  
-  const {code, next } = query;
+  const { code, next } = query;
 
   const installationRef = await db.collection('installations');
 
@@ -39,7 +38,5 @@ export default async function (req: VercelRequest, res: VercelResponse) {
   // This one apps config.
   const installation = await installationRef.doc(accessTokenBody.installation_id).set(accessTokenBody);
 
-  console.log(installation)
-  
   res.redirect(<string>next);
 }
