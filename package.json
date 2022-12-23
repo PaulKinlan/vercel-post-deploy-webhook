@@ -3,7 +3,7 @@
     "dependencies": {
         "@firebase/app-types": "^0.8.1",
         "@vercel/node": "^2.6.1",
-        "firebase-admin": "^11.3.0",
+        "firebase-admin": "^11.4.1",
         "qs": "*",
         "vercel": "^28.5.6"
     },
